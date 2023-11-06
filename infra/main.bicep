@@ -19,10 +19,7 @@ param environmentName string
 @minLength(1)
 @description('Primary location for all resources')
 param location string
-
-@secure()
-@description('SQL Server administrator password')
-param sqlAdminPassword string
+ 
 
 // ---------------------------------------------------------------------------------------------
 //  Optional Parameters
@@ -37,27 +34,14 @@ param sqlAdminPassword string
 // Supporting services
 param applicationInsightsDashboardName string = ''
 param applicationInsightsName string = ''
-param appServicePlanName string = ''
-param sqlServerName string = ''
-param sqlDatabaseName string = ''
 param logAnalyticsName string = ''
-param redisCacheServiceName string = ''
 param resourceGroupName string = ''
-
-// Underlying API Service Names
-param starwarsRestServiceName string = ''
-param todoRestServiceName string = ''
-param todoGraphQLServiceName string = ''
-
-// Web applications
-param todoReactRestWebServiceName string = ''
 
 // API Management instance
 param apiManagementServiceName string = ''
 
 // Location over-rides.  These are provided for when the service in question is not available in all regions.
 param appInsightsLocationName string = ''
-param staticSitesLocationName string = ''
 
 // SKU Overrides
 param apiManagementSku string = ''
@@ -95,53 +79,6 @@ module monitoring './core/monitor/monitoring.bicep' = {
 }
 
 // ---------------------------------------------------------------------------------------------
-//  Database (Cosmos DB)
-// ---------------------------------------------------------------------------------------------
-module database './app/database.bicep' = {
-  name: 'database'
-  scope: rg
-  params: {
-    name: !empty(sqlServerName) ? sqlServerName : '${abbrs.sqlServers}${resourceToken}'
-    databaseName: sqlDatabaseName
-    location: location
-    tags: tags
-    sqlAdminPassword: sqlAdminPassword
-  }
-}
-
-// ---------------------------------------------------------------------------------------------
-//  API Services (App Services)
-// ---------------------------------------------------------------------------------------------
-module appServicePlan './core/host/appserviceplan.bicep' = {
-  name: 'appserviceplan'
-  scope: rg
-  params: {
-    name: !empty(appServicePlanName) ? appServicePlanName : '${abbrs.webServerFarms}${resourceToken}'
-    location: location
-    tags: tags
-    sku: {
-      name: 'B1'
-    }
-  }
-}
-
-// // ---------------------------------------------------------------------------------------------
-// //  Redis Cache
-// // ---------------------------------------------------------------------------------------------
-var redisOutputName = !empty(redisCacheServiceName) ? redisCache.outputs.cacheName : ''
-module redisCache './core/cache/redis.bicep' = if (!empty(redisCacheServiceName)) {
-  name: 'redis-cache'
-  scope: rg
-  params: {
-    name: !empty(redisCacheServiceName) ? redisCacheServiceName : '${abbrs.cacheRedis}${resourceToken}'
-    location: location
-    tags: tags
-    sku: 'Basic'
-    capacity: 1
-  }
-}
-
-// ---------------------------------------------------------------------------------------------
 //  API Management Service
 // ---------------------------------------------------------------------------------------------
 module apiManagement './core/gateway/api-management.bicep' = {
@@ -153,95 +90,17 @@ module apiManagement './core/gateway/api-management.bicep' = {
     tags: tags
     applicationInsightsName: monitoring.outputs.applicationInsightsName
     sku: !empty(apiManagementSku) ? apiManagementSku : 'BasicV2'
-    redisCacheServiceName: redisOutputName
   }
 }
 
-// ---------------------------------------------------------------------------------------------
-//  API: Star Wars REST
-// ---------------------------------------------------------------------------------------------
-module starWarsRestApiService './app/starwars-rest-api.bicep' = {
-  name: 'starwars-rest-api-service'
-  scope: rg
-  params: {
-    name: !empty(starwarsRestServiceName) ? starwarsRestServiceName : 'starwars-rest-${resourceToken}'
-    location: location
-    tags: union(tags, { 'azd-service-name': 'starwars-rest' })
-    applicationInsightsName: monitoring.outputs.applicationInsightsName
-    appServicePlanId: appServicePlan.outputs.id
-    apiManagementServiceName: apiManagement.outputs.serviceName
-    apiManagementLoggerName: apiManagement.outputs.loggerName
-  }
-}
-
-// ---------------------------------------------------------------------------------------------
-//  API: Star Wars Synthetic GraphQL
-// ---------------------------------------------------------------------------------------------
-module starWarsSynQLApiService './app/starwars-syngql-api.bicep' = {
-  name: 'starwars-syngql-api-service'
-  scope: rg
-  params: {
-    apiManagementServiceName: apiManagement.outputs.serviceName
-    apiManagementLoggerName: apiManagement.outputs.loggerName
-    serviceUri: starWarsRestApiService.outputs.serviceUri
-  }
-}
-
-// ---------------------------------------------------------------------------------------------
-//  API: Todo REST
-// ---------------------------------------------------------------------------------------------
-module todoRestApiService './app/todo-rest-api.bicep' = {
-  name: 'todo-rest-api-service'
-  scope: rg
-  params: {
-    name: !empty(todoRestServiceName) ? todoRestServiceName : 'todo-rest-${resourceToken}'
-    location: location
-    tags: union(tags, { 'azd-service-name': 'todo-rest' })
-    applicationInsightsName: monitoring.outputs.applicationInsightsName
-    connectionStrings: {
-      DefaultConnection: {
-        type: 'SQLAzure'
-        value: '${database.outputs.connectionString}; Password=${sqlAdminPassword}'
-      }
-    }
-    appServicePlanId: appServicePlan.outputs.id
-    apiManagementServiceName: apiManagement.outputs.serviceName
-    apiManagementLoggerName: apiManagement.outputs.loggerName
-  }
-}
-
-module todoReactApp './app/todo-react-rest.bicep' = {
-  name: 'todo-react-rest-app'
-  scope: rg
-  params: {
-    name: !empty(todoReactRestWebServiceName) ? todoReactRestWebServiceName : 'todo-rest-${abbrs.webStaticSites}${resourceToken}'
-    location: !empty(staticSitesLocationName) ? staticSitesLocationName : location
-    tags: union(tags, { 'azd-service-name': 'todo-react-rest' })
-  }
-}
-
-// ---------------------------------------------------------------------------------------------
-//  API: Todo GraphQL
-// ---------------------------------------------------------------------------------------------
-module todoGraphQLApiService './app/todo-graphql-api.bicep' = {
-  name: 'todo-graphql-api-service'
-  scope: rg
-  params: {
-    name: !empty(todoGraphQLServiceName) ? todoGraphQLServiceName : 'todo-graphql-${resourceToken}'
-    location: location
-    tags: union(tags, { 'azd-service-name': 'todo-graphql' })
-    applicationInsightsName: monitoring.outputs.applicationInsightsName
-    connectionStrings: {
-      DefaultConnection: {
-        type: 'SQLAzure'
-        value: '${database.outputs.connectionString}; Password=${sqlAdminPassword}'
-      }
-    }
-    appServicePlanId: appServicePlan.outputs.id
-    apiManagementServiceName: apiManagement.outputs.serviceName
-    apiManagementLoggerName: apiManagement.outputs.loggerName
-  }
-}
+// module todoReactApp './app/open-ai-rest-api.bicep' = {
+//   name: 'open-ai-rest-api'
+//   scope: rg
+//   params: {
+//     apiManagementServiceName: apiManagement.outputs.serviceName
+//     apiManagementLoggerName: monitoring.outputs.applicationInsightsName
+//   }
+// }
 
 // ---------------------------------------------------------------------------------------------
 //  OUTPUTS
@@ -253,12 +112,3 @@ output APPLICATIONINSIGHTS_CONNECTION_STRING string = monitoring.outputs.applica
 output API_MANAGEMENT_SERVICE_URI string = apiManagement.outputs.uri
 output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenant().tenantId
-output STARWARS_REST_GATEWAY_URI string = starWarsRestApiService.outputs.gatewayUri
-output STARWARS_SYNGQL_GATEWAY_URI string = starWarsSynQLApiService.outputs.gatewayUri
-output TODO_REST_GATEWAY_URI string = todoRestApiService.outputs.gatewayUri
-output TODO_GRAPHQL_GATEWAY_URI string = todoGraphQLApiService.outputs.gatewayUri
-
-// Outputs for the TODO_REACT_REST app
-output TODO_REACT_REST_API_BASE_URL string = todoRestApiService.outputs.gatewayUri
-output TODO_REACT_REST_APPLICATIONINSIGHTS_CONNECTION_STRING string = monitoring.outputs.applicationInsightsConnectionString
-output TODO_REACT_REST_WEB_BASE_URL string = todoReactApp.outputs.SERVICE_WEB_URI

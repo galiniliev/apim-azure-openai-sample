@@ -1,0 +1,40 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "openai",
+        "description": "",
+        "version": "1.0"
+    },
+    "paths": {
+        "/chat": {
+            "post": {
+                "summary": "Sample API Operation that demonstrates proxying to Azure OpenAI service and does built-in grounding.",
+                "operationId": "chat",
+                "responses": {
+                    "200": {
+                        "description": null
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "apiKeyHeader": {
+                "type": "apiKey",
+                "name": "Ocp-Apim-Subscription-Key",
+                "in": "header"
+            },
+            "apiKeyQuery": {
+                "type": "apiKey",
+                "name": "subscription-key",
+                "in": "query"
+            }
+        }
+    },
+    "security": [{
+        "apiKeyHeader": []
+    }, {
+        "apiKeyQuery": []
+    }]
+}

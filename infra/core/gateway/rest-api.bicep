@@ -8,16 +8,16 @@ param apimServiceName string
 param apimLoggerName string
 
 @description('The path that will be exposed by the API Management service')
-param path string = 'graphql'
+param path string = 'openai'
 
 @description('The URL of the backend service to proxy the request to')
-param serviceUrl string
+param serviceUrl string = ''
 
 @description('The policy to configure.  If blank, a default policy will be used.')
 param policy string = ''
 
 @description('The OpenAPI description of the API')
-param definition string
+param definition string = ''
 
 @description('The named values that need to be defined prior to the policy being uploaded')
 param namedValues array = []
@@ -40,6 +40,7 @@ resource apimLogger 'Microsoft.ApiManagement/service/loggers@2022-08-01' existin
 }
 
 var realPolicy = empty(policy) ? loadTextContent('./default-policy.xml') : policy
+var openAIPolicy = empty(policy) ? loadTextContent('./aoai-operation-policy.xml') : policy
 
 resource restApi 'Microsoft.ApiManagement/service/apis@2022-08-01' = {
   name: name
@@ -73,6 +74,22 @@ resource apiPolicy 'Microsoft.ApiManagement/service/apis/policies@2022-08-01' = 
     format: 'rawxml'
     value: realPolicy
   }
+  dependsOn: [
+    apimNamedValue
+  ]
+}
+
+resource apiOperation 'Microsoft.ApiManagement/service/apis/operations@2022-08-01' = {
+  name: '{apimServiceName}/{name}/chat'
+    properties: {
+      displayName: 'chat'
+      method: 'POST'
+      urlTemplate: '/chat'
+      templateParameters: []
+      description: 'Sample API Operation that demonstrates proxying to Azure OpenAI service and does built-in grounding.'
+      responses: []
+      policies: openAIPolicy
+    }
   dependsOn: [
     apimNamedValue
   ]
