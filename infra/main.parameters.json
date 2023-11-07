@@ -14,8 +14,11 @@
         "appInsightsLocationName": {
             "value": "southcentralus"
         },
-        "staticSitesLocationName": {
-            "value": "centralus"
+        "azureOpenAIKey": {
+            "value": "${AZURE_OPENAI_KEY}"
+        },
+        "azureOpenAIBaseUrl": {
+            "value": "https://devdiv-test-playground.openai.azure.com"
         }
     }
 }
