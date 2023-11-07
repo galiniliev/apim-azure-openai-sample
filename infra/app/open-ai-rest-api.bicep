@@ -13,23 +13,23 @@ var payloadgpt = loadTextContent('./payload-gpt.json')
 
 var namedValues = [
   {
-    name: 'groundingprompt'
+    key: 'groundingprompt'
     value: groundingprompt
   }
   {
-    name: 'payloadgpt'
+    key: 'payloadgpt'
     value: payloadgpt
   }
   {
-    name: 'apiurl'
+    key: 'apiurl'
     value: '${azureOpenAIBaseUrl}/openai/deployments/${azureAIModelName}/chat/completions'
   }
   {
-    name: 'apikey'
+    key: 'apikey'
     value: azureOpenAIKey
   }
   {
-    name: 'apiversion'
+    key: 'apiversion'
     value: azureOpenAIApiVersion
   }
 ]

@@ -2,11 +2,11 @@
     "messages": [
         {
             "role": "system",
-            "content": "You are an AI assistant that helps people find information about Formula1."
+            "content": "__system__"
         },
         {
             "role": "user",
-            "content": "{0}"
+            "content": "__user__"
         }
     ],
     "temperature": 0,
