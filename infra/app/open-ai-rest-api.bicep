@@ -1,6 +1,38 @@
 param apiManagementServiceName string = ''
 param apiManagementLoggerName string = ''
 param path string = 'open-ai'
+param azureOpenAIApiVersion string = '2023-07-01-preview'
+param azureOpenAIBaseUrl string = ''
+param azureAIModelName string= 'gpt-35'
+
+@secure()
+param azureOpenAIKey string
+
+var groundingprompt = loadTextContent('./grounding-prompt.md')
+var payloadgpt = loadTextContent('./payload-gpt.json')
+
+var namedValues = [
+  {
+    name: 'groundingprompt'
+    value: groundingprompt
+  }
+  {
+    name: 'payloadgpt'
+    value: payloadgpt
+  }
+  {
+    name: 'apiurl'
+    value: '${azureOpenAIBaseUrl}/openai/deployments/${azureAIModelName}/chat/completions'
+  }
+  {
+    name: 'apikey'
+    value: azureOpenAIKey
+  }
+  {
+    name: 'apiversion'
+    value: azureOpenAIApiVersion
+  }
+]
 
 module restApiDefinition '../core/gateway/rest-api.bicep' = if (!empty(apiManagementServiceName)) {
   name: 'open-ai-api-definition'
@@ -9,8 +41,8 @@ module restApiDefinition '../core/gateway/rest-api.bicep' = if (!empty(apiManage
     apimServiceName: apiManagementServiceName
     apimLoggerName: apiManagementLoggerName
     path: path
-    // policy: loadTextContent('../../src/ApiManagement/StarWarsRestApi/policy.xml')
     definition: loadTextContent('./chat-open-ai-openapi.json')
+    namedValues: namedValues
   }
 }
 

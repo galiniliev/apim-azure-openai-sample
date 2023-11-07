@@ -46,6 +46,10 @@ param appInsightsLocationName string = ''
 // SKU Overrides
 param apiManagementSku string = ''
 
+@secure()
+param azureOpenAIKey string
+param azureOpenAIBaseUrl string = ''
+
 // ---------------------------------------------------------------------------------------------
 //  Variables
 //    These should not need to be touched.
@@ -93,14 +97,16 @@ module apiManagement './core/gateway/api-management.bicep' = {
   }
 }
 
-// module todoReactApp './app/open-ai-rest-api.bicep' = {
-//   name: 'open-ai-rest-api'
-//   scope: rg
-//   params: {
-//     apiManagementServiceName: apiManagement.outputs.serviceName
-//     apiManagementLoggerName: monitoring.outputs.applicationInsightsName
-//   }
-// }
+module chatAPI './app/open-ai-rest-api.bicep' = {
+  name: 'open-ai-rest-api'
+  scope: rg
+  params: {
+    apiManagementServiceName: apiManagement.outputs.serviceName
+    apiManagementLoggerName: monitoring.outputs.applicationInsightsName
+    azureOpenAIKey: azureOpenAIKey
+    azureOpenAIBaseUrl: azureOpenAIBaseUrl
+  }
+}
 
 // ---------------------------------------------------------------------------------------------
 //  OUTPUTS

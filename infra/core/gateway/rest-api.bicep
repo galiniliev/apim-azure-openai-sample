@@ -11,7 +11,7 @@ param apimLoggerName string
 param path string = 'openai'
 
 @description('The URL of the backend service to proxy the request to')
-param serviceUrl string = ''
+param serviceUrl string = 'https://httpbin.org'
 
 @description('The policy to configure.  If blank, a default policy will be used.')
 param policy string = ''
@@ -80,7 +80,7 @@ resource apiPolicy 'Microsoft.ApiManagement/service/apis/policies@2022-08-01' = 
 }
 
 resource apiOperation 'Microsoft.ApiManagement/service/apis/operations@2022-08-01' = {
-  name: '{apimServiceName}/{name}/chat'
+  name: '${apimServiceName}/${name}/chat'
     properties: {
       displayName: 'chat'
       method: 'POST'
