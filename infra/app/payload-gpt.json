@@ -1,0 +1,18 @@
+{
+    "messages": [
+        {
+            "role": "system",
+            "content": "__system__"
+        },
+        {
+            "role": "user",
+            "content": "__user__"
+        }
+    ],
+    "temperature": 0,
+    "top_p": 0.95,
+    "frequency_penalty": 0,
+    "presence_penalty": 0,
+    "max_tokens": 800,
+    "stop": null
+}

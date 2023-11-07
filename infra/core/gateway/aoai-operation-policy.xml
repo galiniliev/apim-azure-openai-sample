@@ -1,0 +1,35 @@
+<policies>
+    <inbound>
+        <base />
+        <set-variable name="bodyVariable" value="@(context.Request.Body.As<string>())" />
+        <set-variable name="base" value="{{payloadgpt}}" />
+        <set-variable name="ground" value="{{groundingprompt}}" />
+        <set-variable name="prompt" value="@(((string)context.Variables["base"]).Replace("__system__", (string)context.Variables["ground"]).Replace("__user__", (string)context.Variables["bodyVariable"]))" />
+        <set-backend-service base-url="{{apiurl}}" />
+        <rewrite-uri template="/" />
+        <set-header name="Content-Type" exists-action="override">
+            <value>application/json</value>
+        </set-header>
+        <set-header name="Accept" exists-action="override">
+            <value>application/json</value>
+        </set-header>
+        <set-header name="api-key" exists-action="override">
+            <value>{{apikey}}</value>
+        </set-header>
+        <set-query-parameter name="api-version" exists-action="override">
+            <value>{{apiversion}}</value>
+        </set-query-parameter>
+        <set-body template="liquid">
+        {{context.Variables["prompt"]}}
+        </set-body>
+    </inbound>
+    <backend>
+        <forward-request follow-redirects="false" />
+    </backend>
+    <outbound>
+        <base />
+    </outbound>
+    <on-error>
+        <base />
+    </on-error>
+</policies>
