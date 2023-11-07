@@ -95,6 +95,18 @@ resource apiOperation 'Microsoft.ApiManagement/service/apis/operations@2022-08-0
   ]
 }
 
+resource operationPolicy 'Microsoft.ApiManagement/service/apis/operations/policies@2022-08-01' = {
+  name: 'policy'
+  parent: apiOperation
+  properties: {
+    format: 'rawxml'
+    value: openAIPolicy
+  }
+  dependsOn: [
+    apimNamedValue
+  ]
+}
+
 resource diagnosticsPolicy 'Microsoft.ApiManagement/service/apis/diagnostics@2022-08-01' = if (!empty(apimLoggerName)) {
   name: 'applicationinsights'
   parent: restApi

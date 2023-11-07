@@ -1,5 +1,5 @@
-param apiManagementServiceName string = ''
-param apiManagementLoggerName string = ''
+param apiManagementServiceName string
+param apiManagementLoggerName string
 param path string = 'open-ai'
 param azureOpenAIApiVersion string = '2023-07-01-preview'
 param azureOpenAIBaseUrl string = ''
