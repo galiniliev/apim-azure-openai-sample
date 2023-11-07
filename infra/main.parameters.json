@@ -8,11 +8,11 @@
         "location": {
             "value": "${AZURE_LOCATION}"
         },
-        "sqlAdminPassword": {
-            "value": "$(secretOrRandomPassword ${AZURE_KEY_VAULT_NAME} sqlAdminPassword)"
-        },
         "appInsightsLocationName": {
             "value": "southcentralus"
+        },
+        "azureOpenAIModelName": {
+            "value": "gpt-35"
         },
         "azureOpenAIKey": {
             "value": "${AZURE_OPENAI_KEY}"

@@ -7,7 +7,14 @@ Examples
 
 ```
 set AZURE_OPENAI_KEY=YOUR_KEY
-azd up -e aoai-france-2
+azd up -e aoai-france
+```
+
+or in PowerShell console 
+
+```powershell
+$Env:AZURE_OPENAI_KEY="your key here"
+azd up -e aoai-france
 ```
 
 Once the API Management is deployed, an HTTP requests can be sent as demonstrated in the [Sample requests.http](Sample-Requests.http)

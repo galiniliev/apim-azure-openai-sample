@@ -49,6 +49,7 @@ param apiManagementSku string = ''
 @secure()
 param azureOpenAIKey string
 param azureOpenAIBaseUrl string = ''
+param azureOpenAIModelName string = ''
 
 // ---------------------------------------------------------------------------------------------
 //  Variables
@@ -105,6 +106,7 @@ module chatAPI './app/open-ai-rest-api.bicep' = {
     apiManagementLoggerName: apiManagement.outputs.loggerName
     azureOpenAIKey: azureOpenAIKey
     azureOpenAIBaseUrl: azureOpenAIBaseUrl
+    azureAIModelName: azureOpenAIModelName
   }
 }
 
