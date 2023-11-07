@@ -102,7 +102,7 @@ module chatAPI './app/open-ai-rest-api.bicep' = {
   scope: rg
   params: {
     apiManagementServiceName: apiManagement.outputs.serviceName
-    apiManagementLoggerName: monitoring.outputs.applicationInsightsName
+    apiManagementLoggerName: apiManagement.outputs.loggerName
     azureOpenAIKey: azureOpenAIKey
     azureOpenAIBaseUrl: azureOpenAIBaseUrl
   }
