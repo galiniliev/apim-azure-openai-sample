@@ -8,7 +8,7 @@
     "paths": {
         "/chat": {
             "post": {
-                "summary": "Sample API Operation that demonstrates proxying to Azure OpenAI service and does built-in grounding.",
+                "summary": "Chat Interface",
                 "operationId": "chat",
                 "responses": {
                     "200": {
