@@ -1,0 +1,18 @@
+<policies>
+    <inbound>
+        <base />
+        <set-backend-service base-url="{{azureOpenAIBaseUrl}}/openai" />
+        <set-header name="api-key" exists-action="override">
+            <value>{{apikey}}</value>
+        </set-header>
+    </inbound>
+    <backend>
+        <forward-request follow-redirects="false" />
+    </backend>
+    <outbound>
+        <base />
+    </outbound>
+    <on-error>
+        <base />
+    </on-error>
+</policies>

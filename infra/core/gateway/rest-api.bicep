@@ -40,7 +40,6 @@ resource apimLogger 'Microsoft.ApiManagement/service/loggers@2022-08-01' existin
 }
 
 var realPolicy = empty(policy) ? loadTextContent('./default-policy.xml') : policy
-var openAIPolicy = empty(policy) ? loadTextContent('./aoai-operation-policy.xml') : policy
 
 resource restApi 'Microsoft.ApiManagement/service/apis@2022-08-01' = {
   name: name
@@ -79,33 +78,33 @@ resource apiPolicy 'Microsoft.ApiManagement/service/apis/policies@2022-08-01' = 
   ]
 }
 
-resource apiOperation 'Microsoft.ApiManagement/service/apis/operations@2022-08-01' = {
-  name: '${apimServiceName}/${name}/chat'
-    properties: {
-      displayName: 'chat'
-      method: 'POST'
-      urlTemplate: '/chat'
-      templateParameters: []
-      description: 'Sample API Operation that demonstrates proxying to Azure OpenAI service and does built-in grounding.'
-      responses: []
-      policies: openAIPolicy
-    }
-  dependsOn: [
-    apimNamedValue
-  ]
-}
+// resource apiOperation 'Microsoft.ApiManagement/service/apis/operations@2022-08-01' = {
+//   name: '${apimServiceName}/${name}/chat'
+//     properties: {
+//       displayName: 'chat'
+//       method: 'POST'
+//       urlTemplate: '/chat'
+//       templateParameters: []
+//       description: 'Sample API Operation that demonstrates proxying to Azure OpenAI service and does built-in grounding.'
+//       responses: []
+//       policies: openAIPolicy
+//     }
+//   dependsOn: [
+//     apimNamedValue
+//   ]
+// }
 
-resource operationPolicy 'Microsoft.ApiManagement/service/apis/operations/policies@2022-08-01' = {
-  name: 'policy'
-  parent: apiOperation
-  properties: {
-    format: 'rawxml'
-    value: openAIPolicy
-  }
-  dependsOn: [
-    apimNamedValue
-  ]
-}
+// resource operationPolicy 'Microsoft.ApiManagement/service/apis/operations/policies@2022-08-01' = {
+//   name: 'policy'
+//   parent: apiOperation
+//   properties: {
+//     format: 'rawxml'
+//     value: openAIPolicy
+//   }
+//   dependsOn: [
+//     apimNamedValue
+//   ]
+// }
 
 resource diagnosticsPolicy 'Microsoft.ApiManagement/service/apis/diagnostics@2022-08-01' = if (!empty(apimLoggerName)) {
   name: 'applicationinsights'

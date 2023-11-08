@@ -10,6 +10,8 @@ param azureOpenAIKey string
 
 var groundingprompt = loadTextContent('./grounding-prompt.md')
 var payloadgpt = loadTextContent('./payload-gpt.json')
+var auzreOpenAiSwagger = loadTextContent('./2023-09-01-preview.json')
+var openAIPolicy = loadTextContent('./aoai-operation-policy.xml')
 
 var namedValues = [
   {
@@ -25,6 +27,14 @@ var namedValues = [
     value: '${azureOpenAIBaseUrl}/openai/deployments/${azureAIModelName}/chat/completions'
   }
   {
+    key: 'azureOpenAIBaseUrl'
+    value: azureOpenAIBaseUrl
+  }
+  {
+    key: 'azureAIModelName'
+    value: azureAIModelName
+  }
+  {
     key: 'apikey'
     value: azureOpenAIKey
   }
@@ -34,7 +44,7 @@ var namedValues = [
   }
 ]
 
-module restApiDefinition '../core/gateway/rest-api.bicep' = if (!empty(apiManagementServiceName)) {
+module completetionWrapperAPI '../core/gateway/rest-api.bicep' = if (!empty(apiManagementServiceName)) {
   name: 'open-ai-api-definition'
   params: {
     name: 'open-ai'
@@ -43,7 +53,20 @@ module restApiDefinition '../core/gateway/rest-api.bicep' = if (!empty(apiManage
     path: path
     definition: loadTextContent('./chat-open-ai-openapi.json')
     namedValues: namedValues
+    policy: openAIPolicy
   }
 }
 
-output gatewayUri string = restApiDefinition.outputs.serviceUrl
+module completetionProxyAPI '../core/gateway/rest-api.bicep' = if (!empty(apiManagementServiceName)) {
+  name: 'open-ai-api-proxy'
+  params: {
+    name: 'open-ai-proxy'
+    apimServiceName: apiManagementServiceName
+    apimLoggerName: apiManagementLoggerName
+    path: 'openai'
+    policy: loadTextContent('./aoai-api-policy.xml')
+    definition: auzreOpenAiSwagger
+  }
+}
+
+output gatewayUri string = completetionWrapperAPI.outputs.serviceUrl
