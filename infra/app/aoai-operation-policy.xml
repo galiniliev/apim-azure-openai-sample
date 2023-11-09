@@ -1,6 +1,9 @@
 <policies>
     <inbound>
         <base />
+        <rate-limit calls="5" renewal-period="60" />
+        <!-- <rate-limit-by-key calls="5" renewal-period="60" counter-key="@((string)context.Request.IpAddress)" /> -->
+
         <set-variable name="bodyVariable" value="@(context.Request.Body.As<string>())" />
         <set-variable name="base" value="{{payloadgpt}}" />
         <set-variable name="ground" value="{{groundingprompt}}" />
