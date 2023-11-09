@@ -12,13 +12,13 @@
             "value": "southcentralus"
         },
         "azureOpenAIModelName": {
-            "value": "gpt-35"
+            "value": "${AZURE_OPENAI_MODEL}"
         },
         "azureOpenAIKey": {
             "value": "${AZURE_OPENAI_KEY}"
         },
         "azureOpenAIBaseUrl": {
-            "value": "https://devdiv-test-playground.openai.azure.com"
+            "value": "${AZURE_OPENAI_ENDPOINT}"
         }
     }
 }
