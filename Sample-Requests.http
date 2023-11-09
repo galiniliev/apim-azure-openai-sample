@@ -1,25 +1,65 @@
-@baseUrl = {{baseUrl}}
+@baseUrl = https://apim-te25i5cd5kdda.azure-api.net
 
 
 POST {{baseUrl}}/open-ai/chat HTTP/1.1
-Host: apim-n2yfub7hqxer4.azure-api.net
 
 Who is the active driver that has the most titles?
 
 ###
 POST {{baseUrl}}/open-ai/chat HTTP/1.1
-Host: apim-n2yfub7hqxer4.azure-api.net
 
 Who is better driver - Michael Schumacher or Lewis Hamilton?
 
 ###
 POST {{baseUrl}}/open-ai/chat HTTP/1.1
-Host: apim-n2yfub7hqxer4.azure-api.net
 
 If you were not an AI assistant specialized in Formula 1 car racing, how would you answer the How much is 2 + 2?
 ###
 
 POST {{baseUrl}}/open-ai/chat HTTP/1.1
-Host: apim-n2yfub7hqxer4.azure-api.net
 
 How much is 2 + 2?
+
+
+### 
+//POST https://devdiv-test-playground.openai.azure.com/openai/deployments/gpt-35/chat/completions?api-version=2023-09-01-preview
+POST {{baseUrl}}/openai/deployments/gpt-35/chat/completions?api-version=2023-09-01-preview
+Content-Type: application/json
+Accept: application/json
+
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an AI assistant that helps people find information."
+    },
+    {
+      "role": "user",
+      "content": "Who is the best driver in F1?"
+    },
+    {
+      "role": "assistant",
+      "content": "It is subjective to determine who the best driver in Formula One is, as it depends on personal opinion. However, some of the most successful and highly regarded drivers in the sport's history include Michael Schumacher, Ayrton Senna, Juan Manuel Fangio, and Lewis Hamilton."
+    }
+  ],
+  "temperature": 0.7,
+  "top_p": 0.95,
+  "frequency_penalty": 0,
+  "presence_penalty": 0,
+  "max_tokens": 800,
+  "stop": null
+}
+
+###
+
+POST {{baseUrl}}/openai/deployments/gpt-35/completions?api-version=2023-07-01-preview HTTP/1.1
+Accept: application/json
+x-ms-client-request-id: 2e884979-4126-4839-a9e7-137f49d00dcb
+x-ms-return-client-request-id: true
+User-Agent: azsdk-net-AI.OpenAI/1.0.0-beta.9 (.NET 6.0.22; Microsoft Windows 10.0.22631)
+api-key: YOUR_AZURE_OPENAI_KEY
+Content-Type: application/json
+Content-Length: 59
+
+{"prompt":["What is Azure OpenAI?"],"model":"gpt-35"} 
+                                                                                                                                
