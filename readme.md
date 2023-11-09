@@ -5,17 +5,16 @@ To deploy the samples, use `azd up`
 
 Examples
 
-```
-set AZURE_OPENAI_KEY=YOUR_KEY
-azd up -e aoai-france
-```
-
-or in PowerShell console 
-
 ```powershell
-$Env:AZURE_OPENAI_KEY="your key here"
-azd up -e aoai-france
+$env:AZURE_OPENAI_KEY="your-key-here"
+$env:AZURE_OPENAI_ENDPOINT="https://devdiv-test-playground.openai.azure.com"
+$env:AZURE_OPENAI_MODEL="gpt-35"
+
+azd up -e azure-apim-francecentral
 ```
+
+This doesn't deploy Azure Open AI service nor a model. Please use your existing ones and supply in parameters above.
+HINT: use France Central as this will deploy APIM Basic v2 and all required APIs.
 
 Once the API Management is deployed, an HTTP requests can be sent as demonstrated in the [Sample requests.http](Sample-Requests.http)
 
